@@ -1,3 +1,4 @@
+###Setup:
 * clone repo
 * cd into repo
 * bundle install
@@ -5,8 +6,15 @@
 * rails c
 * Generate.new.call
 
+###Output:
+```
+Good Way:   2.590000   0.080000   2.670000 (  2.670772)
+ Bad Way:  13.120000   0.870000  13.990000 ( 14.476514)
+```
+
+###/app/services/generate.rb
+
 ```ruby
-# app/services/generate.rb
 class Generate
   require 'benchmark'
 
