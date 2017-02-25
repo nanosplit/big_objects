@@ -1,24 +1,49 @@
-# README
+* clone repo
+* cd into repo
+* bundle install
+* rails db:setup (seed will take a bit)
+* rails c
+* Generate.new.call
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+```ruby
+# app/services/generate.rb
+class Generate
+  require 'benchmark'
 
-Things you may want to cover:
+  def initialize
+    @users    = User.all
+    @invoices = Invoice.all
+  end
 
-* Ruby version
+  def call
 
-* System dependencies
+    good = Benchmark.measure do good_way end
+    bad  = Benchmark.measure do bad_way end
 
-* Configuration
+    puts "Good Way: #{good}"
+    puts " Bad Way: #{bad}"
 
-* Database creation
+  end
 
-* Database initialization
+private
 
-* How to run the test suite
+  def bad_way
+    hash = {}
+    @users.each do |user|
+      hash[user.id] = user.invoices.sum(:total)
+    end
 
-* Services (job queues, cache servers, search engines, etc.)
+    return hash
+  end
 
-* Deployment instructions
+  def good_way
+    hash = {}
+    @invoices.group_by(&:user_id).each do |user_invoices|
+      hash[user_invoices[0]] = user_invoices[1].map(&:total).inject(0, :+)
+    end
 
-* ...
+    return hash
+  end
+
+end
+```
